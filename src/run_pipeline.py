@@ -2,10 +2,12 @@
 
 from build_features import main as build_features
 from download_data import ensure_dataset
+from eda import main as run_eda
 from train_models import main as train_models
 
 
 if __name__ == "__main__":
     ensure_dataset()
     build_features()
+    run_eda()
     train_models()

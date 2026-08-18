@@ -1,5 +1,6 @@
 {
-  "model": "logistic_regression",
+  "model": "random_forest",
+  "selection_rule": "highest mean 5-fold training ROC-AUC",
   "features": [
     "total_attempts",
     "unique_levels",
@@ -43,15 +44,36 @@
     "success_rate_change",
     "duration_change_ratio"
   ],
-  "decision_threshold": 0.45499999999999996,
-  "development_metrics_at_tuned_threshold": {
-    "threshold": 0.45499999999999996,
-    "accuracy": 0.7351392024078255,
-    "precision": 0.580539656582175,
-    "recall": 0.7880133185349611,
-    "f1": 0.6685499058380414,
-    "roc_auc": 0.8057865256904838,
-    "pr_auc": 0.653090123401899
+  "best_parameters": {
+    "model__class_weight": null,
+    "model__max_depth": 8,
+    "model__max_features": "sqrt",
+    "model__min_samples_leaf": 4,
+    "model__n_estimators": 770
+  },
+  "decision_threshold": 0.31999999999999995,
+  "threshold_rule": "highest training out-of-fold churn F1; recall breaks ties",
+  "cross_validation": {
+    "folds": 5,
+    "shuffle": true
+  },
+  "training_oof_metrics": {
+    "threshold": 0.31999999999999995,
+    "accuracy": 0.7223584211816622,
+    "precision": 0.5602800103707545,
+    "recall": 0.7915750915750915,
+    "f1": 0.6561408835585244,
+    "roc_auc": 0.806040446902643,
+    "pr_auc": 0.640498971308562
+  },
+  "development_metrics": {
+    "threshold": 0.31999999999999995,
+    "accuracy": 0.7332580887885628,
+    "precision": 0.5789473684210527,
+    "recall": 0.781354051054384,
+    "f1": 0.6650921114785073,
+    "roc_auc": 0.8024133053958259,
+    "pr_auc": 0.6359115590671159
   },
   "random_seed": 437
 }

@@ -6,5 +6,10 @@ data/mobile-game-churn.zip
 data/raw/
 data/processed/*.csv
 models/*.joblib
-reports/figures/*.png
 reports/test_predictions.csv
+node_modules/
+tmp/
+deliverables/*.inspect.ndjson
+reports/figures/class_distribution.png
+reports/figures/model_comparison.png
+reports/figures/feature_importance.png

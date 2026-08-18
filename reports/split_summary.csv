@@ -1,0 +1,4 @@
+split,players,labeled,churn_rate
+train,8158,True,0.33464084334395683
+dev,2658,True,0.33897667419112115
+test,2773,False,

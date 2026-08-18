@@ -2,6 +2,18 @@
 
 This project predicts whether a mobile-game player will become inactive in the following week using early gameplay logs. It turns 2.19 million level-attempt events into one feature row per player, compares multiple classifiers, and explains the strongest model's churn signals.
 
+## Final result
+
+The training set has a 33.5% churn rate, so this is a **mild-imbalance (Group 2)** classification problem. Four model families were tuned with five-fold stratified cross-validation. Random Forest was selected by training CV AUROC and evaluated once on the official development split:
+
+- Development AUROC: **0.8024**
+- Precision: **0.5789**
+- Recall: **0.7814**
+- F1-score: **0.6651**
+- AUPRC: **0.6359**
+
+The decision threshold (0.320) was selected using training out-of-fold predictions, not development labels.
+
 ## Dataset
 
 - Source: [Prediction of User Loss in Mobile Games](https://www.kaggle.com/datasets/manchvictor/prediction-of-user-loss-in-mobile-games)
@@ -21,15 +33,23 @@ mobile-game-churn/
 |   |-- raw/data/             # original Kaggle files
 |   `-- processed/            # generated player-level tables
 |-- models/                   # fitted model and feature list
-|-- notebooks/                # optional exploratory notebooks
+|-- notebooks/                # readable exploratory/modeling notebook
+|-- deliverables/
+|   |-- mobile_game_churn_project_report.docx
+|   `-- mobile_game_churn_project_presentation.pptx
 |-- reports/
 |   |-- figures/              # generated plots
-|   |-- metrics.csv           # validation model comparison
+|   |-- metrics.csv           # holdout model comparison
+|   |-- model_selection_summary.csv
+|   |-- shap_importance.csv
 |   `-- project_summary.md    # generated result summary
 |-- src/
 |   |-- download_data.py
 |   |-- build_features.py
+|   |-- eda.py
 |   |-- train_models.py
+|   |-- workflow_figure.py
+|   |-- build_report.py
 |   `-- run_pipeline.py
 `-- requirements.txt
 ```
@@ -55,23 +75,34 @@ Run the stages independently if needed:
 
 ```powershell
 .\.venv\Scripts\python.exe src\build_features.py
+.\.venv\Scripts\python.exe src\eda.py
 .\.venv\Scripts\python.exe src\train_models.py
+.\.venv\Scripts\python.exe src\workflow_figure.py
 ```
 
-## Current modeling plan
+The DOCX report can be rebuilt with the bundled workspace Python or an environment containing `python-docx`:
+
+```powershell
+.\.venv\Scripts\python.exe src\build_report.py
+```
+
+## Modeling protocol
 
 1. Aggregate attempt, progress, success, retry, help-use, duration, difficulty, and time-based features per player.
 2. Preserve the dataset's official train/development/test split.
 3. Compare Logistic Regression, Random Forest, Histogram Gradient Boosting, and XGBoost.
-4. Select the best model by validation ROC-AUC; also report precision, recall, F1, PR-AUC, and accuracy.
-5. Tune the decision threshold on the development set for churn F1.
-6. Produce a test prediction file and model-level feature importance.
+4. Tune 15 configurations per family with five-fold stratified training CV.
+5. Select the family and hyperparameters by mean training CV AUROC.
+6. Select the churn-F1 threshold from training out-of-fold probabilities.
+7. Evaluate the fixed model and threshold once on the development split.
+8. Produce bootstrap intervals, SHAP explanations, error analysis, and unlabeled test predictions.
 
 ## Leakage precautions
 
 - `user_id` is retained only for joining and is excluded from model inputs.
 - Labels are never used during feature generation.
-- Model selection and threshold selection use only the official development set.
+- Model, hyperparameter, and threshold selection use only the official training split.
+- The labeled development set is an untouched final holdout.
 - The untouched test set has no public labels, so it is used only for final predictions.
 
 ## Reproducibility
